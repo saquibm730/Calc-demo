@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Neon‑Style Scientific Calculator</title>
+<style>
+  body{margin:0;background:#1e1e1e;color:#e0e0e0;font-family:monospace}
+  .calc{max-width:360px;margin:30px auto;background:#2d2d2d;padding:10px;
+        border-radius:8px;box-shadow:0 0 12px #0ff}
+  .display{background:#111;border-radius:4px;height:50px;display:flex;
+           align-items:center;justify-content:flex-end;font-size:1.5em;
+           padding:0 10px;margin-bottom:10px}
+  button{background:#222;color:#0ff;border:none;cursor:pointer;font-size:1.2em;
+          padding:12px;margin:2px;border-radius:4px}
+  button:hover{background:#0ff;color:#222}
+  .wide{grid-column:span 2}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr)}
+</style>
+</head>
+<body>
+<div class="calc">
+  <div id="screen" class="display">0</div>
+  <div class="grid">
+    <button class="wide" onclick="clearScreen()">C</button>
+    <button onclick="del()">⌫</button>
+    <button onclick="addFunction('pi')">π</button>
+    <button onclick="addOp('/')">÷</button>
+
+    <button onclick="addDigit('7')">7</button>
+    <button onclick="addDigit('8')">8</button>
+    <button onclick="addDigit('9')">9</button>
+    <button onclick="addOp('*')">×</button>
+
+    <button onclick="addDigit('4')">4</button>
+    <button onclick="addDigit('5')">5</button>
+    <button onclick="addDigit('6')">6</button>
+    <button onclick="addOp('-')">‑</button>
+
+    <button onclick="addDigit('1')">1</button>
+    <button onclick="addDigit('2')">2</button>
+    <button onclick="addDigit('3')">3</button>
+    <button onclick="addOp('+')">+</button>
+
+    <button onclick="addDigit('0')">0</button>
+    <button onclick="addOp('.')">.</button>
+    <button class="wide" onclick="calculate()">=</button>
+  </div>
+  <hr style="border:none;border-top:1px solid #444;margin:10px 0">
+  <div class="grid">
+    <button onclick="addFunction('sin(')">sin</button>
+    <button onclick="addFunction('cos(')">cos</button>
+    <button onclick="addFunction('tan(')">tan</button>
+    <button onclick="addFunction('log(')">log</button>
+
+    <button onclick="addFunction('sqrt(')">√</button>
+    <button onclick="addFunction('pow(')">^</button>
+    <button onclick="addFunction('fac(')">n!</button>
+    <button onclick="addFunction('(')">(</button>
+
+    <button onclick="addFunction(')')">)</button>
+    <button class="wide" onclick="addFunction('exp(')">eˣ</button>
+  </div>
+</div>
+
+<script>
+let expr = '';
+
+function updateScreen(){document.getElementById('screen').textContent=expr||'0';}
+function addDigit(d){expr+=d;updateScreen();}
+function addOp(o){expr+=o;updateScreen();}
+function addFunction(f){expr+=f;updateScreen();}
+function clearScreen(){expr='';updateScreen();}
+function del(){expr=expr.slice(0,-1);updateScreen();}
+
+function calculate(){
+  try{
+    // Replace trig names with Math.xxx
+    let e=expr.replace(/sin\(/g,'Math.sin(')
+              .replace(/cos\(/g,'Math.cos(')
+              .replace(/tan\(/g,'Math.tan(')
+              .replace(/log\(/g,'Math.log10(')
+              .replace(/sqrt\(/g,'Math.sqrt(')
+              .replace(/pow\(/g,'Math.pow(')
+              .replace(/fac\(/g,'factorial(')
+              .replace(/pi/g,Math.PI)
+              .replace(/exp\(/g,'Math.exp(');
+
+    // Factorial helper
+    window.factorial=(n)=>{if(n<0)return NaN; if(n===0)return 1;
+                          let r=1; for(let i=1;i<=n;i++)r*=i; return r;}
+
+    let res=eval(e);
+    expr=res.toString();
+    updateScreen();
+  }catch(e){expr='Error';updateScreen();expr='';}
+}
+</script>
+</body>
+</html>
